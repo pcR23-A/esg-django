@@ -49,5 +49,5 @@ def chartjs_chart(request):
 
     return render(request, 'tracker/chartjs_chart.html', {
         'dates': json.dumps(dates),
-        'emissions': json.dumps(emissions)
+        'values': json.dumps(emissions)
     })

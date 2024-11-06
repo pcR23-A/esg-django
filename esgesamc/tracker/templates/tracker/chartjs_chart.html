@@ -1,32 +1,85 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chart.js Example</title>
+    <title>Emissions Chart</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="esgesamc\tracker\static\tracker\css\dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="{% static 'tracker/css/styles.css' %}" rel="stylesheet">
+
 </head>
 <body>
-    <canvas id="myChart"></canvas>
+    <div class="dashboard-grid">
+        <div class="chart-container"><canvas id="emissionsChart"></canvas></div>
+        <div class="chart-container"><canvas id="chart2"></canvas></div>
+        <div class="chart-container"><canvas id="chart3"></canvas></div>
+        <div class="chart-container"><canvas id="chart4"></canvas></div>
+    </div>
     <script>
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'bar', // Type of chart
+        // Retrieve data passed from Django
+        const labels = JSON.parse('{{ dates | safe }}');  // X-axis labels
+        const dataValues = JSON.parse('{{ values | safe }}');  // Y-axis data
+
+        // Initialize the chart
+        const ctx = document.getElementById('emissionsChart').getContext('2d');
+        const emissionsChart = new Chart(ctx, {
+            type: 'bar',  // Set the chart type
             data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'], // Labels for X-axis
+                labels: labels,  // X-axis labels
                 datasets: [{
-                    label: 'My First Dataset',
-                    data: [12, 19, 3, 5, 2, 3, 12], // Data points
-                    borderColor: 'rgb(255, 99, 132)', // Border color
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)', // Background color
-                    borderWidth: 1
+                    label: 'Emissions',
+                    data: dataValues,  // Y-axis data
+                    backgroundColor: 'rgba(75, 192, 192, 0.8)',  // Bar color
+                    borderColor: 'rgb(75, 192, 192)',  // Border color for bars
+                    borderWidth: 1,
+                    family: 'Roboto',  // Set font family
+                                size: 14,          // Font size for legend
+                                weight: '500' 
                 }]
             },
             options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#e0e0e0', // Color of the legend text
+                            family: 'Roboto',  // Set font family
+                                size: 14,          // Font size for legend
+                                weight: '200'      // Font weight for legend
+                        }
+                    }
+                },
                 scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.2)'  // Grid line color for X-axis
+                        },
+                        ticks: {
+                            color: '#e0e0e0',
+                            font: {
+                                family: 'Roboto',  // Set font family
+                                size: 14,          // Font size for legend
+                                weight: '200', // Color of the X-axis labels
+                                maxRotation: 45,  // Rotate labels by 45 degrees
+                                minRotation: 30,  // Minimum rotation for labels
+                                padding: 10  // Increase padding between the labels and the chart
+                        }
+                        }
+                    },
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.2)'  // Grid line color for Y-axis
+                        },
+                        ticks: {
+                            color: '#e0e0e0',
+                            font: {
+                                family: 'Roboto',  // Set font family
+                                size: 14,          // Font size for legend
+                                weight: '200'   // Color of the Y-axis labels
+                        }
+                     }
                     }
                 }
             }

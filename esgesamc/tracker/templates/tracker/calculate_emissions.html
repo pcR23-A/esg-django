@@ -1,0 +1,28 @@
+<!-- tracker/templates/tracker/calculate_emissions.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Footprint Calculator</title>
+</head>
+<body>
+    <h1>Carbon Footprint Calculator</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Calculate</button>
+    </form>
+
+    {% if results %}
+        <h2>Results</h2>
+        <p>Total CO₂ Emissions: {{ results.total_emission }} kg</p>
+        <ul>
+            <li>{{ results.percentages.kwh }}% from {{ results.kwh_emission }} kg CO₂ (Electricity)</li>
+            <li>{{ results.percentages.ng }}% from {{ results.ng_emission }} kg CO₂ (Natural Gas)</li>
+            <li>{{ results.percentages.gasoline }}% from {{ results.gasoline_emission }} kg CO₂ (Gasoline)</li>
+            <li>{{ results.percentages.diesel }}% from {{ results.diesel_emission }} kg CO₂ (Diesel)</li>
+        </ul>
+    {% endif %}
+</body>
+</html>

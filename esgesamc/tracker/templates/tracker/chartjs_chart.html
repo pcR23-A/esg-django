@@ -10,13 +10,24 @@
 
 </head>
 <body>
+    <div>
+        
+    </div>
+    
+    
     <div class="dashboard-grid">
-        <div class="chart-container"><canvas id="emissionsChart"></canvas></div>
-        <div class="chart-container"><canvas id="chart2"></canvas></div>
+        <div class="chart-container">
+            <label for="thresholdInput">Set Threshold: </label>
+            <input type="number" id="thresholdInput" placeholder="Enter threshold" />
+            <button onclick="updateChartThreshold()">Update Threshold</button>
+            <canvas id="emissionsChart"></canvas>
+        </div>
+        <div class="chart-container"><canvas id="powerSource"></canvas></div>
         <div class="chart-container"><canvas id="chart3"></canvas></div>
         <div class="chart-container"><canvas id="chart4"></canvas></div>
     </div>
     <script>
+        let threshold = 200;  // Default threshold value
         // Retrieve data passed from Django
         const labels = JSON.parse('{{ dates | safe }}');  // X-axis labels
         const dataValues = JSON.parse('{{ values | safe }}');  // Y-axis data
@@ -30,8 +41,14 @@
                 datasets: [{
                     label: 'Emissions',
                     data: dataValues,  // Y-axis data
-                    backgroundColor: 'rgba(75, 192, 192, 0.8)',  // Bar color
-                    borderColor: 'rgb(75, 192, 192)',  // Border color for bars
+                    backgroundColor: function(context) {
+                    const value = context.raw;
+                    return value > threshold ? 'rgba(255, 99, 132, 0.7)' : 'rgba(75, 192, 192, 0.7)';
+                    },
+                     borderColor: function(context) {
+                    const value = context.raw;
+                    return value > threshold ? 'rgb(255, 99, 132)' : 'rgb(75, 192, 192)';
+                    },
                     borderWidth: 1,
                     family: 'Roboto',  // Set font family
                                 size: 14,          // Font size for legend
@@ -59,11 +76,9 @@
                             color: '#e0e0e0',
                             font: {
                                 family: 'Roboto',  // Set font family
-                                size: 14,          // Font size for legend
+                                size: 8,          // Font size for legend
                                 weight: '200', // Color of the X-axis labels
-                                maxRotation: 45,  // Rotate labels by 45 degrees
-                                minRotation: 30,  // Minimum rotation for labels
-                                padding: 10  // Increase padding between the labels and the chart
+
                         }
                         }
                     },
@@ -84,6 +99,18 @@
                 }
             }
         });
+            function updateChartThreshold() {
+        const newThreshold = parseFloat(document.getElementById('thresholdInput').value);
+        
+        if (!isNaN(newThreshold)) {
+            threshold = newThreshold;  // Update threshold
+            emissionsChart.update();  // Re-render chart with new colors
+        } else {
+            alert("Please enter a valid number for the threshold.");
+        }
+    }
+    // Power Source - Chart 2
+    
     </script>
 </body>
 </html>
